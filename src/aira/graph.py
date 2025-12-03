@@ -101,7 +101,7 @@ class ResearchAgent:
 
         selected_chunks = state["documents"][:15]
         document_text = "\n\n".join(doc.page_content for doc in selected_chunks)
-
+        
         prompt = ChatPromptTemplate.from_messages(
             [
                 SystemMessage(
@@ -113,9 +113,11 @@ class ResearchAgent:
                     "Motivation, Method, Results, Deployment. Limit to 12 bullets total."
                 ),
                 HumanMessage("{documents}"),
+                # HumanMessage(lambda s: "\n\n".join(doc.page_content for doc in s["documents"][:15])),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages(documents=document_text)
+        # messages: List[BaseMessage] = prompt.format_messages({"documents": state["documents"]})
+        messages: List[BaseMessage] = prompt.format_messages({"documents": document_text})
         summary: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "research_summary": summary.content}
 
