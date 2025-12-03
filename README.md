@@ -20,7 +20,7 @@ LangGraph 기반의 리서치/설계 에이전트로, 논문 PDF와 비즈니스
    ```bash
    export OPENAI_API_KEY=sk-...
    ```
-3. 실행 예시 (존재하는 PDF 경로를 반드시 넣어야 합니다)
+3. 실행 예시
    ```bash
    python scripts/run_agent.py \
      --pdf /path/to/survey.pdf /path/to/model_paper.pdf \
@@ -32,18 +32,10 @@ LangGraph 기반의 리서치/설계 에이전트로, 논문 PDF와 비즈니스
 
 ## 코드 개요
 - `src/aira/graph.py`: LangGraph 스테이트 그래프 정의. 단계별 노드(논문 요약 → 요구사항 정렬 → 아키텍처 설계 → 실험 계획)를 통해 결과를 합성
-- `scripts/run_agent.py`: CLI 엔트리 포인트. 입력 인자를 받아 `ResearchAgent`를 실행하고 JSON으로 결과를 출력합니다.
+- `scripts/run_agent.py`: CLI 엔트리 포인트. 입력 인자를 받아 `ResearchAgent`를 실행하고 JSON으로 결과 출력
 
 ## 출력 예시
-실행 후 JSON 구조 예시:
-```json
-{
-  "research_summary": "...논문 핵심 요약...",
-  "requirements_analysis": "...KPI/데이터/제약 기반 정렬...",
-  "architecture": "...추천 파이프라인 설계...",
-  "experiments": "...베이스라인/실험 플랜..."
-}
-```
+![alt text](image.png)
 
 ## 향후 확장 아이디어
 - Multi-Turn 확장 (예정)
