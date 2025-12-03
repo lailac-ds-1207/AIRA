@@ -139,13 +139,11 @@ class ResearchAgent:
             ]
         )
         messages: List[BaseMessage] = prompt.format_messages(
-            {
-                "objective": self.config.business_objective,
-                "kpi": self.config.kpi,
-                "data": self.config.data_description,
-                "constraints": self.config.constraints,
-                "summary": state["research_summary"],
-            }
+            objective=self.config.business_objective,
+            kpi=self.config.kpi,
+            data=self.config.data_description,
+            constraints=self.config.constraints,
+            summary=state["research_summary"],
         )
         analysis: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "requirements_analysis": analysis.content}
@@ -163,7 +161,9 @@ class ResearchAgent:
                 HumanMessage("Requirements analysis:\n{analysis}"),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages({"analysis": state["requirements_analysis"]})
+        messages: List[BaseMessage] = prompt.format_messages(
+            analysis=state["requirements_analysis"]
+        )
         architecture: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "architecture": architecture.content}
 
@@ -178,7 +178,7 @@ class ResearchAgent:
                 HumanMessage("Architecture proposal:\n{architecture}"),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages({"architecture": state["architecture"]})
+        messages: List[BaseMessage] = prompt.format_messages(architecture=state["architecture"])
         experiments: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "experiments": experiments.content}
 
