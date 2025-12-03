@@ -96,6 +96,12 @@ class ResearchAgent:
         return validated
 
     def _summarize_documents(self, state: AgentState) -> AgentState:
+        if not state["documents"]:
+            raise ValueError("No documents available for summarization")
+
+        selected_chunks = state["documents"][:15]
+        document_text = "\n\n".join(doc.page_content for doc in selected_chunks)
+
         prompt = ChatPromptTemplate.from_messages(
             [
                 SystemMessage(
@@ -106,10 +112,10 @@ class ResearchAgent:
                     "Summarize the following document chunks. Respond in Korean with section headers: "
                     "Motivation, Method, Results, Deployment. Limit to 12 bullets total."
                 ),
-                HumanMessage(lambda s: "\n\n".join(doc.page_content for doc in s["documents"][:15])),
+                HumanMessage("{documents}"),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages({"documents": state["documents"]})
+        messages: List[BaseMessage] = prompt.format_messages(documents=document_text)
         summary: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "research_summary": summary.content}
 
@@ -131,13 +137,11 @@ class ResearchAgent:
             ]
         )
         messages: List[BaseMessage] = prompt.format_messages(
-            {
-                "objective": self.config.business_objective,
-                "kpi": self.config.kpi,
-                "data": self.config.data_description,
-                "constraints": self.config.constraints,
-                "summary": state["research_summary"],
-            }
+            objective=self.config.business_objective,
+            kpi=self.config.kpi,
+            data=self.config.data_description,
+            constraints=self.config.constraints,
+            summary=state["research_summary"],
         )
         analysis: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "requirements_analysis": analysis.content}
@@ -155,7 +159,9 @@ class ResearchAgent:
                 HumanMessage("Requirements analysis:\n{analysis}"),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages({"analysis": state["requirements_analysis"]})
+        messages: List[BaseMessage] = prompt.format_messages(
+            analysis=state["requirements_analysis"]
+        )
         architecture: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "architecture": architecture.content}
 
@@ -170,7 +176,7 @@ class ResearchAgent:
                 HumanMessage("Architecture proposal:\n{architecture}"),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages({"architecture": state["architecture"]})
+        messages: List[BaseMessage] = prompt.format_messages(architecture=state["architecture"])
         experiments: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "experiments": experiments.content}
 
