@@ -96,6 +96,12 @@ class ResearchAgent:
         return validated
 
     def _summarize_documents(self, state: AgentState) -> AgentState:
+        if not state["documents"]:
+            raise ValueError("No documents available for summarization")
+
+        selected_chunks = state["documents"][:15]
+        document_text = "\n\n".join(doc.page_content for doc in selected_chunks)
+        
         prompt = ChatPromptTemplate.from_messages(
             [
                 SystemMessage(
@@ -106,10 +112,12 @@ class ResearchAgent:
                     "Summarize the following document chunks. Respond in Korean with section headers: "
                     "Motivation, Method, Results, Deployment. Limit to 12 bullets total."
                 ),
-                HumanMessage(lambda s: "\n\n".join(doc.page_content for doc in s["documents"][:15])),
+                HumanMessage("{documents}"),
+                # HumanMessage(lambda s: "\n\n".join(doc.page_content for doc in s["documents"][:15])),
             ]
         )
-        messages: List[BaseMessage] = prompt.format_messages({"documents": state["documents"]})
+        # messages: List[BaseMessage] = prompt.format_messages({"documents": state["documents"]})
+        messages: List[BaseMessage] = prompt.format_messages({"documents": document_text})
         summary: AIMessage = self.llm.invoke(messages)  # type: ignore[arg-type]
         return {**state, "research_summary": summary.content}
 
