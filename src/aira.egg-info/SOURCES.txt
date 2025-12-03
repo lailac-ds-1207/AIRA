@@ -1,0 +1,8 @@
+README.md
+setup.py
+src/aira/__init__.py
+src/aira/graph.py
+src/aira.egg-info/PKG-INFO
+src/aira.egg-info/SOURCES.txt
+src/aira.egg-info/dependency_links.txt
+src/aira.egg-info/top_level.txt

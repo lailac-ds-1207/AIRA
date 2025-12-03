@@ -1,5 +1,5 @@
-langchain==0.2.13
-langchain-community==0.2.13
+langchain
+langchain-community
 langchain-openai==0.1.22
 langgraph==0.2.16
 pypdf==4.3.0

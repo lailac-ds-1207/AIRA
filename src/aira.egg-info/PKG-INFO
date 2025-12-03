@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: aira
+Version: 0.1.0
+Summary: AI Research Agent for recommender systems and personalization
+Author: Jong Ha Lee
+Requires-Python: >=3.9
+Dynamic: author
+Dynamic: requires-python
+Dynamic: summary
